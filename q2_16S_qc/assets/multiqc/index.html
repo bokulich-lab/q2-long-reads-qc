@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+  <h2>Aggregated Results</h2>
+  <iframe src="multiqc_data/multiqc_report.html" width="1400px" height="700px"></iframe>
+</div>
+
+
+{% endblock %}
+
+{% block footer %}
+{% set loading_selector = '#loading' %}
+{% include 'js-error-handler.html' %}
+
+{% endblock %}
