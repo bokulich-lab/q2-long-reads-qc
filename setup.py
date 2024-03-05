@@ -1,0 +1,26 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2023, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
+
+from setuptools import find_packages, setup
+
+import versioneer
+
+setup(
+    name="q2-16S-qc",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
+    license="BSD-3-Clause",
+    packages=find_packages(),
+    author="Christos Matzoros",
+    author_email="christosmatzoros@gmail.com",
+    description="QIIME2 plugin utilizing FastQC and MultiQC for "
+    "comprehensive quality control analysis of 16S sequences.",
+    url="https://github.com/bokulich-lab/q2-16S-qc",
+    entry_points={"qiime2.plugins": ["q2-16S-qc=q2_16S_qc.plugin_setup:plugin"]},
+    zip_safe=False,
+)
