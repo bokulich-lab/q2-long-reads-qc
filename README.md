@@ -30,3 +30,10 @@ qiime 16S-qc aggregate-results --i-sequences paired_reads.qza --i-cutadapt-repor
 ```
 
 ##### [Qiime2 view](https://view.qiime2.org/) can be used to view the result visualization
+
+<br>
+
+We have added a new semantic type for the cutadapt log files named "CutadaptLogs".
+```
+qiime tools import --type 'CutadaptLogs' --input-path dir_with_cutadapt_log_files --output-path cutadapt_logs.qza
+```
