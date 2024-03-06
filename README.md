@@ -11,7 +11,7 @@ mamba create -yn q2-16S-qc \
 
 #### Activate q2-16S-qc environment
 ```
-mamba activate q2-16S-qc
+conda activate q2-16S-qc
 ```
 
 
