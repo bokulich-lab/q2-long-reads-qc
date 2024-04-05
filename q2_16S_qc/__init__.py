@@ -1,7 +1,8 @@
 from ._version import get_versions
-from .quality_control import aggregate_results
+from .aggregate_results import aggregate_results
+from .trim import trim
 
 __version__ = get_versions()["version"]
 del get_versions
 
-__all__ = ["aggregate_results"]
+__all__ = ["aggregate_results", "trim"]
