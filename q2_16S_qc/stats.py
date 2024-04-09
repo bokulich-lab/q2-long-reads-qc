@@ -15,27 +15,28 @@ import q2templates
 from q2_types.per_sample_sequences import SingleLanePerSamplePairedEndFastqDirFmt
 
 from q2_16S_qc._utils import run_command
-from q2_16S_qc.types._format import CutadaptLogsDirectoryFormat
 
 
-# Run Nanoplot on sequence files in the specified directory
-def _run_nanoplot(sequences_path, tmp):
-    contents = os.listdir(sequences_path)
-    matching_files = [f for f in contents if f.endswith(".fastq.gz")]
-    # Create a list of full paths for each matching file
-    full_paths = [os.path.join(sequences_path, f) for f in matching_files]
+# Run NanoPlot on sequence files in the specified directory
+def _run_nanoplot(sequences_path, output_dir):
+    # Gather all matching fastq.gz files in the directory
+    matching_files = [
+        file for file in os.listdir(sequences_path) if file.endswith(".fastq.gz")
+    ]
 
-    # Construct Nanoplot command
+    # Check if no matching files were found
+    if not matching_files:
+        raise FileNotFoundError(
+            f"No .fastq.gz files found in the directory {sequences_path}"
+        )
+
+    # Construct the full command for NanoPlot with paths and output directory
     nanoplot_cmd = [
         "NanoPlot",
         "--fastq",
-    ]
-
-    nanoplot_cmd += full_paths
-
-    nanoplot_cmd += [
+        *[os.path.join(sequences_path, file) for file in matching_files],
         "-o",
-        str(tmp),
+        output_dir,
     ]
 
     try:
@@ -52,7 +53,6 @@ def _run_nanoplot(sequences_path, tmp):
 def stats(
     output_dir: str,
     sequences: SingleLanePerSamplePairedEndFastqDirFmt,
-    cutadapt_reports: CutadaptLogsDirectoryFormat = None,
 ):
     with tempfile.TemporaryDirectory() as tmp:
         _run_nanoplot(sequences.path, tmp)
@@ -61,10 +61,10 @@ def stats(
         TEMPLATES = pkg_resources.resource_filename("q2_16S_qc", "assets")
         copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
 
-        # Copy MultiQC data from the temporary directory to the output directory
+        # Copy Nanoplot data from the temporary directory to the output directory
         copy_tree(tmp, os.path.join(output_dir, "nanoplot_data"))
 
-        # Generate an index.html file for MultiQC in the output directory
+        # Generate an index.html file for Nanoplot in the output directory
         context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}
         index = os.path.join(TEMPLATES, "nanoplot", "index.html")
         templates = [index]

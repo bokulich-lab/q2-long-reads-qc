@@ -44,21 +44,21 @@ def _run_fastqc(sequences_path, tmp):
             )
 
 
-# Extract Cutadapt log files and copy them to a temporary directory
-def _extract_cutadapt_logs(cutadapt_reports_path, tmp):
+# Extracts Cutadapt log files from a specified directory and copies them to
+# a temporary directory
+def _extract_cutadapt_logs(cutadapt_reports_path, tmp_dir):
+    # Get a list of all Cutadapt log files in the reports directory
     cutadapt_reports_contents = os.listdir(cutadapt_reports_path)
-    matching_files = [
-        file for file in cutadapt_reports_contents if file.endswith(".log")
-    ]
+    log_files = [file for file in cutadapt_reports_contents if file.endswith(".log")]
 
-    for file_name in matching_files:
+    # Copy each log file to the temporary directory
+    for file_name in log_files:
         source_path = os.path.join(cutadapt_reports_path, file_name)
-        destination_path = os.path.join(tmp, file_name)
+        destination_path = os.path.join(tmp_dir, file_name)
 
         try:
-            # Copy the file to the tmp directory
             shutil.copyfile(source_path, destination_path)
-            print(f"Successfully copied {file_name} to {tmp}")
+            print(f"Successfully copied {file_name} to {tmp_dir}")
         except Exception as e:
             print(f"Error copying {file_name}: {e}")
 

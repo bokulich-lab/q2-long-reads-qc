@@ -39,7 +39,6 @@ plugin.register_semantic_type_to_format(
     CutadaptLogs, artifact_format=CutadaptLogsDirectoryFormat
 )
 
-
 plugin.visualizers.register_function(
     function=q2_16S_qc.aggregate_results,
     inputs={
@@ -52,8 +51,8 @@ plugin.visualizers.register_function(
         "cutadapt_reports": "Cutadapt reports.",
     },
     parameter_descriptions={},
-    name="Quality control.",
-    description="Quality control of 16S sequences for nf-16S-pipe.",
+    name="Quality control statistics using FastQC and MultiQC.",
+    description="Quality control statistics using FastQC and MultiQC.",
     citations=[citations["MultiQC"]],
 )
 
@@ -61,17 +60,15 @@ plugin.visualizers.register_function(
     function=q2_16S_qc.stats,
     inputs={
         "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
-        "cutadapt_reports": CutadaptLogs,
     },
     parameters="",
     input_descriptions={
         "sequences": "Fastq input sequences.",
-        "cutadapt_reports": "Cutadapt reports.",
     },
     parameter_descriptions={},
     name="Quality control.",
-    description="Quality control of 16S sequences for nf-16S-pipe.",
-    citations=[citations["MultiQC"]],
+    description="Quality control statistics using NanoPlot.",
+    citations=[citations["Nanopack2"]],
 )
 
 plugin.methods.register_function(
@@ -105,5 +102,6 @@ plugin.methods.register_function(
         "tailcrop": "Trim N nucleotides from the end of a read.",
     },
     name="Trimming long reads.",
-    description="Filtering and trimming long reads.",
+    description="Filtering and trimming long reads using chopper.",
+    citations=[citations["Nanopack2"]],
 )

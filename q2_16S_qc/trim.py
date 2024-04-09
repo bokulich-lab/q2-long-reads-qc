@@ -32,7 +32,6 @@ def build_filtered_out_dir(input_reads, filtered_seqs):
         # Filter the input manifest DataFrame for forward reads
         output_df = input_manifest[input_manifest.direction == "forward"]
 
-    print(output_df)
     # Initialize the output manifest
     output_manifest = FastqManifestFormat()
     # Copy input manifest to output manifest
