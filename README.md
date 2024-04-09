@@ -1,5 +1,5 @@
 # q2-long-reads-qc
-QIIME2 plugin utilizing FastQC and MultiQC for quality control analysis of 16S sequences, generating easy-to-interpret reports as QIIME2 vizualization.
+QIIME2 plugin for quality control analysis of long-read sequences.
 
 #### Create q2-long-reads-qc environment
 ```
