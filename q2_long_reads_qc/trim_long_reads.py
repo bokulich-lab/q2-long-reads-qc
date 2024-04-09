@@ -20,7 +20,7 @@ from q2_types.per_sample_sequences._transformer import (
     _parse_and_validate_manifest_partial,
 )
 
-from q2_16S_qc._utils import run_commands_with_pipe
+from q2_long_reads_qc._utils import run_commands_with_pipe
 
 
 def build_filtered_out_dir(input_reads, filtered_seqs):
@@ -57,7 +57,7 @@ def build_filtered_out_dir(input_reads, filtered_seqs):
     return result
 
 
-def trim(
+def trim_long_reads(
     query_reads: SingleLanePerSampleSingleEndFastqDirFmt,
     threads: int = 4,
     quality: int = 0,

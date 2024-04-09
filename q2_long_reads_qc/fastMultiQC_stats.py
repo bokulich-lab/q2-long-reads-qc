@@ -15,8 +15,8 @@ import pkg_resources
 import q2templates
 from q2_types.per_sample_sequences import SingleLanePerSamplePairedEndFastqDirFmt
 
-from q2_16S_qc._utils import run_command
-from q2_16S_qc.types._format import CutadaptLogsDirectoryFormat
+from q2_long_reads_qc._utils import run_command
+from q2_long_reads_qc.types._format import CutadaptLogsDirectoryFormat
 
 
 # Run FastQC on sequence files in the specified directory
@@ -77,7 +77,7 @@ def _run_multiqc(tmp):
         )
 
 
-def aggregate_results(
+def fastMultiQC_stats(
     output_dir: str,
     sequences: SingleLanePerSamplePairedEndFastqDirFmt,
     cutadapt_reports: CutadaptLogsDirectoryFormat = None,
@@ -94,7 +94,7 @@ def aggregate_results(
         _run_multiqc(tmp)
 
         # Copy MultiQC templates to the output directory
-        TEMPLATES = pkg_resources.resource_filename("q2_16S_qc", "assets")
+        TEMPLATES = pkg_resources.resource_filename("q2_long_reads_qc", "assets")
         copy_tree(os.path.join(TEMPLATES, "multiqc"), output_dir)
 
         # Copy MultiQC data from the temporary directory to the output directory

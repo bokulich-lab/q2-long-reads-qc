@@ -14,7 +14,7 @@ import pkg_resources
 import q2templates
 from q2_types.per_sample_sequences import SingleLanePerSamplePairedEndFastqDirFmt
 
-from q2_16S_qc._utils import run_command
+from q2_long_reads_qc._utils import run_command
 
 
 # Run NanoPlot on sequence files in the specified directory
@@ -50,7 +50,7 @@ def _run_nanoplot(sequences_path, output_dir):
         )
 
 
-def stats(
+def nanoplot_stats(
     output_dir: str,
     sequences: SingleLanePerSamplePairedEndFastqDirFmt,
 ):
@@ -58,7 +58,7 @@ def stats(
         _run_nanoplot(sequences.path, tmp)
 
         # Copy Nanoplot templates to the output directory
-        TEMPLATES = pkg_resources.resource_filename("q2_16S_qc", "assets")
+        TEMPLATES = pkg_resources.resource_filename("q2_long_reads_qc", "assets")
         copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
 
         # Copy Nanoplot data from the temporary directory to the output directory

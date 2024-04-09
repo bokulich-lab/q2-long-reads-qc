@@ -1,2 +1,2 @@
 include versioneer.py
-include q2_16S_qc/_version.py
+include q2_long_reads_qc/_version.py

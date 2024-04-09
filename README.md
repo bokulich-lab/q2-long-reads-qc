@@ -1,17 +1,17 @@
-# q2-16S-qc
+# q2-long-reads-qc
 QIIME2 plugin utilizing FastQC and MultiQC for quality control analysis of 16S sequences, generating easy-to-interpret reports as QIIME2 vizualization.
 
-#### Create q2-16S-qc environment
+#### Create q2-long-reads-qc environment
 ```
-mamba create -yn q2-16S-qc \
+mamba create -yn q2-long-reads-qc \
     -c conda-forge -c bioconda -c https://packages.qiime2.org/qiime2/2023.7/community/staged/ -c defaults \
     q2cli q2templates q2-types bs4 multiqc fastqc
 
 ```
 
-#### Activate q2-16S-qc environment
+#### Activate q2-long-reads-qc environment
 ```
-conda activate q2-16S-qc
+conda activate q2-long-reads-qc
 ```
 
 
@@ -26,7 +26,7 @@ Download data [here](https://polybox.ethz.ch/index.php/s/xDYeOuxtTdypIXQ)
 
 #### Execute
 ```
-qiime 16S-qc aggregate-results --i-sequences paired_reads.qza --i-cutadapt-reports cutadapt_logs.qza --verbose --o-visualization viz
+qiime long-reads-qc aggregate-results --i-sequences paired_reads.qza --i-cutadapt-reports cutadapt_logs.qza --verbose --o-visualization viz
 ```
 
 ##### [Qiime2 view](https://view.qiime2.org/) can be used to view the result visualization

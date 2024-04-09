@@ -13,24 +13,24 @@ from q2_types.per_sample_sequences import (
 from q2_types.sample_data import SampleData
 from qiime2.plugin import Citations, Int, Plugin, Range
 
-import q2_16S_qc
-from q2_16S_qc import __version__
-from q2_16S_qc.types._format import CutadaptLogsDirectoryFormat, CutadaptLogsFmt
-from q2_16S_qc.types._type import CutadaptLogs
+import q2_long_reads_qc
+from q2_long_reads_qc import __version__
+from q2_long_reads_qc.types._format import CutadaptLogsDirectoryFormat, CutadaptLogsFmt
+from q2_long_reads_qc.types._type import CutadaptLogs
 
-citations = Citations.load("citations.bib", package="q2_16S_qc")
+citations = Citations.load("citations.bib", package="q2_long_reads_qc")
 
 plugin = Plugin(
-    name="16S_qc",
+    name="long_reads_qc",
     version=__version__,
-    website="https://github.com/bokulich-lab/q2-16S-qc",
-    package="q2_16S_qc",
+    website="https://github.com/bokulich-lab/q2-long-reads-qc",
+    package="q2_long_reads_qc",
     description=(
         "QIIME2 plugin utilizing FastQC and MultiQC for comprehensive quality "
         "control analysis of 16S sequences, generating easy-to-interpret "
         "reports as QIIME2 vizualization."
     ),
-    short_description="QIIME2 plugin for quality control of 16S sequences.",
+    short_description="QIIME2 plugin for quality control of long sequences.",
 )
 
 plugin.register_formats(CutadaptLogsDirectoryFormat, CutadaptLogsFmt)
@@ -40,7 +40,7 @@ plugin.register_semantic_type_to_format(
 )
 
 plugin.visualizers.register_function(
-    function=q2_16S_qc.aggregate_results,
+    function=q2_long_reads_qc.fastMultiQC_stats,
     inputs={
         "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
         "cutadapt_reports": CutadaptLogs,
@@ -57,7 +57,7 @@ plugin.visualizers.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=q2_16S_qc.stats,
+    function=q2_long_reads_qc.nanoplot_stats,
     inputs={
         "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
     },
@@ -66,13 +66,13 @@ plugin.visualizers.register_function(
         "sequences": "Fastq input sequences.",
     },
     parameter_descriptions={},
-    name="Quality control.",
+    name="Quality control statistics using NanoPlot.",
     description="Quality control statistics using NanoPlot.",
     citations=[citations["Nanopack2"]],
 )
 
 plugin.methods.register_function(
-    function=q2_16S_qc.trim,
+    function=q2_long_reads_qc.trim_long_reads,
     inputs={
         "query_reads": SampleData[SequencesWithQuality],
     },
@@ -101,7 +101,7 @@ plugin.methods.register_function(
         "headcrop": "Trim N nucleotides from the start of a read.",
         "tailcrop": "Trim N nucleotides from the end of a read.",
     },
-    name="Trimming long reads.",
-    description="Filtering and trimming long reads using chopper.",
+    name="Filtering and trimming long reads using Chopper.",
+    description="Filtering and trimming long reads using Chopper.",
     citations=[citations["Nanopack2"]],
 )
