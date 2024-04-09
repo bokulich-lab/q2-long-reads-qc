@@ -57,6 +57,23 @@ plugin.visualizers.register_function(
     citations=[citations["MultiQC"]],
 )
 
+plugin.visualizers.register_function(
+    function=q2_16S_qc.stats,
+    inputs={
+        "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
+        "cutadapt_reports": CutadaptLogs,
+    },
+    parameters="",
+    input_descriptions={
+        "sequences": "Fastq input sequences.",
+        "cutadapt_reports": "Cutadapt reports.",
+    },
+    parameter_descriptions={},
+    name="Quality control.",
+    description="Quality control of 16S sequences for nf-16S-pipe.",
+    citations=[citations["MultiQC"]],
+)
+
 plugin.methods.register_function(
     function=q2_16S_qc.trim,
     inputs={
