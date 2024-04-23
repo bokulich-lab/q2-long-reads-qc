@@ -5,6 +5,7 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import glob
 import os
 import subprocess
 import tempfile
@@ -17,28 +18,24 @@ from q2_types.per_sample_sequences import SingleLanePerSamplePairedEndFastqDirFm
 from q2_long_reads_qc._utils import run_command
 
 
+# Return a list of fastq.gz files in the specified directory
+def _find_fastq_files(directory, extension="*.fastq.gz"):
+    pattern = os.path.join(directory, extension)
+    files = glob.glob(pattern)
+    if not files:
+        raise FileNotFoundError(f"No {extension} files found in {directory}")
+    return files
+
+
+# Construct the command for running NanoPlot
+def _construct_nanoplot_command(files, output_dir):
+    return ["NanoPlot", "--fastq", *files, "-o", output_dir]
+
+
 # Run NanoPlot on sequence files in the specified directory
 def _run_nanoplot(sequences_path, output_dir):
-    # Gather all matching fastq.gz files in the directory
-    matching_files = [
-        file for file in os.listdir(sequences_path) if file.endswith(".fastq.gz")
-    ]
-
-    # Check if no matching files were found
-    if not matching_files:
-        raise FileNotFoundError(
-            f"No .fastq.gz files found in the directory {sequences_path}"
-        )
-
-    # Construct the full command for NanoPlot with paths and output directory
-    nanoplot_cmd = [
-        "NanoPlot",
-        "--fastq",
-        *[os.path.join(sequences_path, file) for file in matching_files],
-        "-o",
-        output_dir,
-    ]
-
+    fastq_files = _find_fastq_files(sequences_path)
+    nanoplot_cmd = _construct_nanoplot_command(fastq_files, output_dir)
     try:
         # Run Nanoplot command
         run_command(nanoplot_cmd, verbose=True)
@@ -50,7 +47,7 @@ def _run_nanoplot(sequences_path, output_dir):
         )
 
 
-def nanoplot_stats(
+def stats(
     output_dir: str,
     sequences: SingleLanePerSamplePairedEndFastqDirFmt,
 ):

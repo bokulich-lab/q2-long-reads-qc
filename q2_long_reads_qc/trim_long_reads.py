@@ -23,6 +23,35 @@ from q2_types.per_sample_sequences._transformer import (
 from q2_long_reads_qc._utils import run_commands_with_pipe
 
 
+# Constructs the command for the 'chopper' tool based on provided trimming parameters.
+def construct_chopper_command(
+    quality: int,
+    maxqual: int,
+    minlength: int,
+    maxlength: int,
+    headcrop: int,
+    tailcrop: int,
+    threads: int,
+) -> list:
+    return [
+        "chopper",
+        "--quality",
+        str(quality),
+        "--maxqual",
+        str(maxqual),
+        "--minlength",
+        str(minlength),
+        "--maxlength",
+        str(maxlength),
+        "--headcrop",
+        str(headcrop),
+        "--tailcrop",
+        str(tailcrop),
+        "--threads",
+        str(threads),
+    ]
+
+
 def build_filtered_out_dir(input_reads, filtered_seqs):
     # Parse the input manifest to get a DataFrame of reads
     with input_reads.manifest.view(FastqManifestFormat).open() as fh:
@@ -31,6 +60,8 @@ def build_filtered_out_dir(input_reads, filtered_seqs):
         )
         # Filter the input manifest DataFrame for forward reads
         output_df = input_manifest[input_manifest.direction == "forward"]
+
+    print("output_df:", output_df)
 
     # Initialize the output manifest
     output_manifest = FastqManifestFormat()
@@ -57,7 +88,7 @@ def build_filtered_out_dir(input_reads, filtered_seqs):
     return result
 
 
-def trim_long_reads(
+def chop(
     query_reads: SingleLanePerSampleSingleEndFastqDirFmt,
     threads: int = 4,
     quality: int = 0,
@@ -79,23 +110,10 @@ def trim_long_reads(
         res = str(filtered_seqs.path / os.path.basename(fwd))
 
         unzip_cmd = ["gunzip", "-c", str(fwd)]
-        chopper_cmd = [
-            "chopper",
-            "--quality",
-            str(quality),
-            "--maxqual",
-            str(maxqual),
-            "--minlength",
-            str(minlength),
-            "--maxlength",
-            str(maxlength),
-            "--headcrop",
-            str(headcrop),
-            "--tailcrop",
-            str(tailcrop),
-            "--threads",
-            str(threads),
-        ]
+        chopper_cmd = construct_chopper_command(
+            quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
+        )
+
         zip_cmd = ["gzip"]
 
         try:

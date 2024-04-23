@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import call, patch
 
 import q2_long_reads_qc._utils
-import q2_long_reads_qc.quality_control
+import q2_long_reads_qc.fastMultiQC_stats
 
 
 class TestRunFastQC(unittest.TestCase):
@@ -44,7 +44,7 @@ class TestRunFastQC(unittest.TestCase):
         ]
 
         # Action
-        q2_long_reads_qc.quality_control._run_fastqc(sequences_path, tmp_path)
+        q2_long_reads_qc.fastMultiQC_stats._run_fastqc(sequences_path, tmp_path)
 
         # Assert
         mock_listdir.assert_called_once_with(sequences_path)
@@ -62,7 +62,7 @@ class TestRunFastQC(unittest.TestCase):
 
         # Action and Assert
         with self.assertRaises(Exception):
-            q2_long_reads_qc.quality_control._run_fastqc(sequences_path, tmp_path)
+            q2_long_reads_qc.fastMultiQC_stats._run_fastqc(sequences_path, tmp_path)
 
         # Ensure the error was raised due to the subprocess.CalledProcessError
         mock_run_command.assert_called()
@@ -91,7 +91,7 @@ class TestExtractCutadaptLogs(unittest.TestCase):
         ]
 
         # Action
-        q2_long_reads_qc.quality_control._extract_cutadapt_logs(
+        q2_long_reads_qc.fastMultiQC_stats._extract_cutadapt_logs(
             cutadapt_reports_path, tmp_path
         )  # Adjust according to your module's structure
 
@@ -111,7 +111,7 @@ class TestRunMultiQC(unittest.TestCase):
         expected_cmd = ["multiqc", str(tmp_path), "-o", str(tmp_path)]
 
         # Action
-        q2_long_reads_qc.quality_control._run_multiqc(tmp_path)
+        q2_long_reads_qc.fastMultiQC_stats._run_multiqc(tmp_path)
 
         # Assert
         mock_run_command.assert_called_once_with(expected_cmd, check=True)
@@ -124,7 +124,7 @@ class TestRunMultiQC(unittest.TestCase):
 
         # Action and Assert
         with self.assertRaises(Exception) as context:
-            q2_long_reads_qc.quality_control._run_multiqc(tmp_path)
+            q2_long_reads_qc.fastMultiQC_stats._run_multiqc(tmp_path)
 
         # Ensure the exception was raised due to the subprocess.CalledProcessError
         self.assertTrue(

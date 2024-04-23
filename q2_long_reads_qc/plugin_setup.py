@@ -39,6 +39,7 @@ plugin.register_semantic_type_to_format(
     CutadaptLogs, artifact_format=CutadaptLogsDirectoryFormat
 )
 
+"""
 plugin.visualizers.register_function(
     function=q2_long_reads_qc.fastMultiQC_stats,
     inputs={
@@ -55,9 +56,10 @@ plugin.visualizers.register_function(
     description="Quality control statistics using FastQC and MultiQC.",
     citations=[citations["MultiQC"]],
 )
+"""
 
 plugin.visualizers.register_function(
-    function=q2_long_reads_qc.nanoplot_stats,
+    function=q2_long_reads_qc.stats,
     inputs={
         "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
     },
@@ -72,7 +74,7 @@ plugin.visualizers.register_function(
 )
 
 plugin.methods.register_function(
-    function=q2_long_reads_qc.trim_long_reads,
+    function=q2_long_reads_qc.chop,
     inputs={
         "query_reads": SampleData[SequencesWithQuality],
     },

@@ -18,8 +18,7 @@ setup(
     packages=find_packages(),
     author="Christos Matzoros",
     author_email="christosmatzoros@gmail.com",
-    description="QIIME2 plugin utilizing FastQC and MultiQC for "
-    "comprehensive quality control analysis of 16S sequences.",
+    description="QIIME2 plugin for quality control analysis of long-read sequences.",
     url="https://github.com/bokulich-lab/q2-long-reads-qc",
     entry_points={
         "qiime2.plugins": ["q2-long-reads-qc=q2_long_reads_qc.plugin_setup:plugin"]

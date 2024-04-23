@@ -5,6 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+
+"""
 import os
 import shutil
 import subprocess
@@ -83,7 +85,8 @@ def fastMultiQC_stats(
     cutadapt_reports: CutadaptLogsDirectoryFormat = None,
 ):
     with tempfile.TemporaryDirectory() as tmp:
-        # Run FastQC on the input sequences and store results in the temporary directory
+        # Run FastQC on the input sequences and store results in
+        # the temporary directory
         _run_fastqc(sequences.path, tmp)
 
         # Extract cutadapt logs and store in the temporary directory
@@ -105,3 +108,4 @@ def fastMultiQC_stats(
         index = os.path.join(TEMPLATES, "multiqc", "index.html")
         templates = [index]
         q2templates.render(templates, output_dir, context=context)
+"""
