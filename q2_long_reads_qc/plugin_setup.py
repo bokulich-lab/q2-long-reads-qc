@@ -6,17 +6,28 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from q2_types.per_sample_sequences import (
-    PairedEndSequencesWithQuality,
-    SequencesWithQuality,
-)
-from q2_types.sample_data import SampleData
-from qiime2.plugin import Citations, Int, Plugin, Range
+from qiime2.plugin import Citations, Plugin
 
 import q2_long_reads_qc
 from q2_long_reads_qc import __version__
-from q2_long_reads_qc.types._format import CutadaptLogsDirectoryFormat, CutadaptLogsFmt
-from q2_long_reads_qc.types._type import CutadaptLogs
+from q2_long_reads_qc._params import (
+    stats_paired_input_descriptions,
+    stats_paired_inputs,
+    stats_single_input_descriptions,
+    stats_single_inputs,
+    trim_paired_input_descriptions,
+    trim_paired_inputs,
+    trim_paired_output_descriptions,
+    trim_paired_outputs,
+    trim_paired_parameter_descriptions,
+    trim_paired_parameters,
+    trim_single_input_descriptions,
+    trim_single_inputs,
+    trim_single_output_descriptions,
+    trim_single_outputs,
+    trim_single_parameter_descriptions,
+    trim_single_parameters,
+)
 
 citations = Citations.load("citations.bib", package="q2_long_reads_qc")
 
@@ -33,76 +44,50 @@ plugin = Plugin(
     short_description="QIIME2 plugin for quality control of long sequences.",
 )
 
-plugin.register_formats(CutadaptLogsDirectoryFormat, CutadaptLogsFmt)
-plugin.register_semantic_types(CutadaptLogs)
-plugin.register_semantic_type_to_format(
-    CutadaptLogs, artifact_format=CutadaptLogsDirectoryFormat
+plugin.visualizers.register_function(
+    function=q2_long_reads_qc.stats_single,
+    inputs=stats_single_inputs,
+    parameters="",
+    input_descriptions=stats_single_input_descriptions,
+    parameter_descriptions={},
+    name="Quality control statistics using NanoPlot for long single-end reads.",
+    description="Quality control statistics using NanoPlot for long single-end reads.",
+    citations=[citations["Nanopack2"]],
 )
 
-"""
 plugin.visualizers.register_function(
-    function=q2_long_reads_qc.fastMultiQC_stats,
-    inputs={
-        "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
-        "cutadapt_reports": CutadaptLogs,
-    },
+    function=q2_long_reads_qc.stats_paired,
+    inputs=stats_paired_inputs,
     parameters="",
-    input_descriptions={
-        "sequences": "Fastq input sequences.",
-        "cutadapt_reports": "Cutadapt reports.",
-    },
+    input_descriptions=stats_paired_input_descriptions,
     parameter_descriptions={},
-    name="Quality control statistics using FastQC and MultiQC.",
-    description="Quality control statistics using FastQC and MultiQC.",
-    citations=[citations["MultiQC"]],
+    name="Quality control statistics using NanoPlot for long paired-end reads.",
+    description="Quality control statistics using NanoPlot for long paired-end reads.",
+    citations=[citations["Nanopack2"]],
 )
-"""
 
-plugin.visualizers.register_function(
-    function=q2_long_reads_qc.stats,
-    inputs={
-        "sequences": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality],
-    },
-    parameters="",
-    input_descriptions={
-        "sequences": "Fastq input sequences.",
-    },
-    parameter_descriptions={},
-    name="Quality control statistics using NanoPlot.",
-    description="Quality control statistics using NanoPlot.",
+
+plugin.methods.register_function(
+    function=q2_long_reads_qc.trim_single,
+    inputs=trim_single_inputs,
+    outputs=trim_single_outputs,
+    parameters=trim_single_parameters,
+    input_descriptions=trim_single_input_descriptions,
+    output_descriptions=trim_single_output_descriptions,
+    parameter_descriptions=trim_single_parameter_descriptions,
+    name="Filtering and trimming long reads using Chopper.",
+    description="Filtering and trimming long reads using Chopper.",
     citations=[citations["Nanopack2"]],
 )
 
 plugin.methods.register_function(
-    function=q2_long_reads_qc.chop,
-    inputs={
-        "query_reads": SampleData[SequencesWithQuality],
-    },
-    outputs=[("filtered_query_reads", SampleData[SequencesWithQuality])],
-    parameters={
-        "threads": Int % Range(1, None),
-        "quality": Int % Range(0, None),
-        "maxqual": Int % Range(0, None),
-        "minlength": Int % Range(1, None),
-        "maxlength": Int % Range(1, None),
-        "headcrop": Int % Range(0, None),
-        "tailcrop": Int % Range(0, None),
-    },
-    input_descriptions={
-        "query_reads": "Fastq input sequences.",
-    },
-    output_descriptions={
-        "filtered_query_reads": "The resulting filtered sequences.",
-    },
-    parameter_descriptions={
-        "threads": "Number of threads.",
-        "quality": "Sets a minimum Phred average quality score.",
-        "maxqual": "Sets a maximum Phred average quality score.",
-        "minlength": "Sets a minimum read length.",
-        "maxlength": "Sets a maximum read length.",
-        "headcrop": "Trim N nucleotides from the start of a read.",
-        "tailcrop": "Trim N nucleotides from the end of a read.",
-    },
+    function=q2_long_reads_qc.trim_paired,
+    inputs=trim_paired_inputs,
+    outputs=trim_paired_outputs,
+    parameters=trim_paired_parameters,
+    input_descriptions=trim_paired_input_descriptions,
+    output_descriptions=trim_paired_output_descriptions,
+    parameter_descriptions=trim_paired_parameter_descriptions,
     name="Filtering and trimming long reads using Chopper.",
     description="Filtering and trimming long reads using Chopper.",
     citations=[citations["Nanopack2"]],

@@ -9,21 +9,16 @@ import os
 import subprocess
 
 import pandas as pd
-import qiime2.util
-import yaml
 from q2_types.per_sample_sequences import (
-    FastqManifestFormat,
+    SingleLanePerSamplePairedEndFastqDirFmt,
     SingleLanePerSampleSingleEndFastqDirFmt,
-    YamlFormat,
-)
-from q2_types.per_sample_sequences._transformer import (
-    _parse_and_validate_manifest_partial,
 )
 
-from q2_long_reads_qc._utils import run_commands_with_pipe
+from q2_long_reads_qc._utils import build_filtered_out_dir, run_commands_with_pipe
 
 
-# Constructs the command for the 'chopper' tool based on provided trimming parameters.
+# Generates a command list for the 'chopper' tool
+# incorporating provided parameters for sequence quality trimming
 def construct_chopper_command(
     quality: int,
     maxqual: int,
@@ -52,43 +47,23 @@ def construct_chopper_command(
     ]
 
 
-def build_filtered_out_dir(input_reads, filtered_seqs):
-    # Parse the input manifest to get a DataFrame of reads
-    with input_reads.manifest.view(FastqManifestFormat).open() as fh:
-        input_manifest = _parse_and_validate_manifest_partial(
-            fh, single_end=True, absolute=False
+# Executes a pipeline that unzips FASTQ files, processes them with 'chopper',
+# and then rezips them
+def execute(unzip_cmd, chopper_cmd, filtered_seqs_path):
+    try:
+        run_commands_with_pipe(
+            unzip_cmd, chopper_cmd, ["gzip"], str(filtered_seqs_path)
         )
-        # Filter the input manifest DataFrame for forward reads
-        output_df = input_manifest[input_manifest.direction == "forward"]
-
-    print("output_df:", output_df)
-
-    # Initialize the output manifest
-    output_manifest = FastqManifestFormat()
-    # Copy input manifest to output manifest
-    with output_manifest.open() as fh:
-        output_df.to_csv(fh, index=False)
-
-    # Initialize the result object to store filtered reads
-    result = SingleLanePerSampleSingleEndFastqDirFmt()
-    # Write the output manifest to the result object
-    result.manifest.write_data(output_manifest, FastqManifestFormat)
-    # Duplicate each filtered sequence file to the result object's directory
-    for _, _, filename, _ in output_df.itertuples():
-        qiime2.util.duplicate(
-            str(filtered_seqs.path / filename), str(result.path / filename)
+    except subprocess.CalledProcessError as e:
+        raise Exception(
+            f"An error was encountered while using chopper, "
+            f"(return code {e.returncode}), please inspect "
+            "stdout and stderr to learn more."
         )
 
-    # Create metadata about the phred offset
-    metadata = YamlFormat()
-    metadata.path.write_text(yaml.dump({"phred-offset": 33}))
-    # Attach metadata to the result
-    result.metadata.write_data(metadata, YamlFormat)
 
-    return result
-
-
-def chop(
+# Trims single-end read FASTQ files using specified quality control parameters
+def trim_single(
     query_reads: SingleLanePerSampleSingleEndFastqDirFmt,
     threads: int = 4,
     quality: int = 0,
@@ -105,27 +80,48 @@ def chop(
     # Import data from the manifest file to a df
     input_df = query_reads.manifest.view(pd.DataFrame)
 
-    # Iterate over each forward read in the DataFrame
+    # Iterate over each FASTQ file in the DataFrame
+    # and exececute chopper command
     for _, fwd in input_df.itertuples():
-        res = str(filtered_seqs.path / os.path.basename(fwd))
-
-        unzip_cmd = ["gunzip", "-c", str(fwd)]
+        filtered_seqs_path = filtered_seqs.path / os.path.basename(fwd)
         chopper_cmd = construct_chopper_command(
             quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
         )
 
-        zip_cmd = ["gzip"]
+        execute(["gunzip", "-c", str(fwd)], chopper_cmd, filtered_seqs_path)
 
-        try:
-            # Execute samtools fastq
-            run_commands_with_pipe(unzip_cmd, chopper_cmd, zip_cmd, str(res))
-        except subprocess.CalledProcessError as e:
-            raise Exception(
-                f"An error was encountered while using chopper, "
-                f"(return code {e.returncode}), please inspect "
-                "stdout and stderr to learn more."
-            )
+    build_filtered_out_dir(query_reads, input_df, filtered_seqs)
 
-    result = build_filtered_out_dir(query_reads, filtered_seqs)
+    return query_reads
 
-    return result
+
+# Trims paired-end read FASTQ files using specified quality control parameter
+def trim_paired(
+    query_reads: SingleLanePerSamplePairedEndFastqDirFmt,
+    threads: int = 4,
+    quality: int = 0,
+    maxqual: int = 1000,
+    minlength: int = 1,
+    maxlength: int = 2147483647,
+    headcrop: int = 0,
+    tailcrop: int = 0,
+) -> SingleLanePerSamplePairedEndFastqDirFmt:
+
+    # Initialize directory format for filtered sequences
+    filtered_seqs = SingleLanePerSamplePairedEndFastqDirFmt()
+
+    # Import data from the manifest file to a df
+    input_df = query_reads.manifest.view(pd.DataFrame)
+
+    # Iterate over the FASTQ paired-end files in the DataFrame
+    # and exececute chopper command
+    for _, fwd, rev in input_df.itertuples():
+        filtered_seqs_path = filtered_seqs.path / os.path.basename(fwd)
+        chopper_cmd = construct_chopper_command(
+            quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
+        )
+        execute(["gunzip", "-c", str(fwd), str(rev)], chopper_cmd, filtered_seqs_path)
+
+    build_filtered_out_dir(query_reads, input_df, filtered_seqs)
+
+    return query_reads
