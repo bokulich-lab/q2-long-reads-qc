@@ -116,11 +116,13 @@ def trim_paired(
     # Iterate over the FASTQ paired-end files in the DataFrame
     # and exececute chopper command
     for _, fwd, rev in input_df.itertuples():
-        filtered_seqs_path = filtered_seqs.path / os.path.basename(fwd)
+        filtered_seqs_path_fwd = filtered_seqs.path / os.path.basename(fwd)
+        filtered_seqs_path_rev = filtered_seqs.path / os.path.basename(rev)
         chopper_cmd = construct_chopper_command(
             quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
         )
-        execute(["gunzip", "-c", str(fwd), str(rev)], chopper_cmd, filtered_seqs_path)
+        execute(["gunzip", "-c", str(fwd)], chopper_cmd, filtered_seqs_path_fwd)
+        execute(["gunzip", "-c", str(rev)], chopper_cmd, filtered_seqs_path_rev)
 
     build_filtered_out_dir(query_reads, input_df, filtered_seqs)
 

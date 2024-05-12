@@ -23,5 +23,12 @@ setup(
     entry_points={
         "qiime2.plugins": ["q2-long-reads-qc=q2_long_reads_qc.plugin_setup:plugin"]
     },
+    package_data={
+        "q2_long_reads_qc": ["citations.bib"],
+        "q2_long_reads_qc.tests": [
+            "data/*",
+            "data/*/*",
+        ],
+    },
     zip_safe=False,
 )
