@@ -37,9 +37,10 @@ plugin = Plugin(
     website="https://github.com/bokulich-lab/q2-long-reads-qc",
     package="q2_long_reads_qc",
     description=(
-        "QIIME2 plugin utilizing FastQC and MultiQC for comprehensive quality "
-        "control analysis of 16S sequences, generating easy-to-interpret "
-        "reports as QIIME2 vizualization."
+        "QIIME2 plugin that utilizes Chopper and NanoPlot for quality "
+        "control analysis of long sequences, generating easy-to-interpret "
+        "stats as QIIME2 vizualization and allows trimming based "
+        "on various filters."
     ),
     short_description="QIIME2 plugin for quality control of long sequences.",
 )
@@ -50,8 +51,8 @@ plugin.visualizers.register_function(
     parameters="",
     input_descriptions=stats_single_input_descriptions,
     parameter_descriptions={},
-    name="Quality control statistics using NanoPlot for long single-end reads.",
-    description="Quality control statistics using NanoPlot for long single-end reads.",
+    name="Quality control statistics of long single-end reads.",
+    description="Quality control statistics of long single-end reads using NanoPlot.",
     citations=[citations["Nanopack2"]],
 )
 
@@ -61,8 +62,8 @@ plugin.visualizers.register_function(
     parameters="",
     input_descriptions=stats_paired_input_descriptions,
     parameter_descriptions={},
-    name="Quality control statistics using NanoPlot for long paired-end reads.",
-    description="Quality control statistics using NanoPlot for long paired-end reads.",
+    name="Quality control statistics of long paired-end reads.",
+    description="Quality control statistics of long paired-end reads using NanoPlot.",
     citations=[citations["Nanopack2"]],
 )
 
@@ -75,8 +76,8 @@ plugin.methods.register_function(
     input_descriptions=trim_single_input_descriptions,
     output_descriptions=trim_single_output_descriptions,
     parameter_descriptions=trim_single_parameter_descriptions,
-    name="Filtering and trimming long reads using Chopper.",
-    description="Filtering and trimming long reads using Chopper.",
+    name="Trim long single-end sequences.",
+    description="Trim long demultiplexed single-end sequences using Chopper tool.",
     citations=[citations["Nanopack2"]],
 )
 
@@ -88,7 +89,7 @@ plugin.methods.register_function(
     input_descriptions=trim_paired_input_descriptions,
     output_descriptions=trim_paired_output_descriptions,
     parameter_descriptions=trim_paired_parameter_descriptions,
-    name="Filtering and trimming long reads using Chopper.",
-    description="Filtering and trimming long reads using Chopper.",
+    name="Trim long paired-end sequences.",
+    description="Trim long demultiplexed paired-end sequences using Chopper tool.",
     citations=[citations["Nanopack2"]],
 )
