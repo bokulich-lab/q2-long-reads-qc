@@ -6,15 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 import os
+import shutil
 import subprocess
 
-import pandas as pd
-from q2_types.per_sample_sequences import (
-    SingleLanePerSamplePairedEndFastqDirFmt,
-    SingleLanePerSampleSingleEndFastqDirFmt,
-)
+from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
 
-from q2_long_reads_qc._utils import build_filtered_out_dir, run_commands_with_pipe
+from q2_long_reads_qc._utils import run_commands_with_pipe
 
 
 # Generates a command list for the 'chopper' tool
@@ -47,12 +44,15 @@ def construct_chopper_command(
     ]
 
 
-# Executes a pipeline that unzips FASTQ files, processes them with 'chopper',
+# Executes a pipeline that unzips FASTQ files, processes them with 'chopper'
 # and then rezips them
-def execute(unzip_cmd, chopper_cmd, filtered_seqs_path):
+def process_and_rezip(input_file, chopper_cmd, filtered_seqs_path):
     try:
         run_commands_with_pipe(
-            unzip_cmd, chopper_cmd, ["gzip"], str(filtered_seqs_path)
+            ["gunzip", "-c", str(input_file)],
+            chopper_cmd,
+            ["gzip"],
+            str(filtered_seqs_path),
         )
     except subprocess.CalledProcessError as e:
         raise Exception(
@@ -62,42 +62,9 @@ def execute(unzip_cmd, chopper_cmd, filtered_seqs_path):
         )
 
 
-# Trims single-end read FASTQ files using specified quality control parameters
-def trim_single(
-    query_reads: SingleLanePerSampleSingleEndFastqDirFmt,
-    threads: int = 4,
-    quality: int = 0,
-    maxqual: int = 1000,
-    minlength: int = 1,
-    maxlength: int = 2147483647,
-    headcrop: int = 0,
-    tailcrop: int = 0,
-) -> SingleLanePerSampleSingleEndFastqDirFmt:
-
-    # Initialize directory format for filtered sequences
-    filtered_seqs = SingleLanePerSampleSingleEndFastqDirFmt()
-
-    # Import data from the manifest file to a df
-    input_df = query_reads.manifest.view(pd.DataFrame)
-
-    # Iterate over each FASTQ file in the DataFrame
-    # and exececute chopper command
-    for _, fwd in input_df.itertuples():
-        filtered_seqs_path = filtered_seqs.path / os.path.basename(fwd)
-        chopper_cmd = construct_chopper_command(
-            quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
-        )
-
-        execute(["gunzip", "-c", str(fwd)], chopper_cmd, filtered_seqs_path)
-
-    build_filtered_out_dir(query_reads, input_df, filtered_seqs)
-
-    return query_reads
-
-
 # Trims paired-end read FASTQ files using specified quality control parameter
-def trim_paired(
-    query_reads: SingleLanePerSamplePairedEndFastqDirFmt,
+def trim(
+    query_reads: CasavaOneEightSingleLanePerSampleDirFmt,
     threads: int = 4,
     quality: int = 0,
     maxqual: int = 1000,
@@ -105,25 +72,27 @@ def trim_paired(
     maxlength: int = 2147483647,
     headcrop: int = 0,
     tailcrop: int = 0,
-) -> SingleLanePerSamplePairedEndFastqDirFmt:
+) -> CasavaOneEightSingleLanePerSampleDirFmt:
 
     # Initialize directory format for filtered sequences
-    filtered_seqs = SingleLanePerSamplePairedEndFastqDirFmt()
-
-    # Import data from the manifest file to a df
-    input_df = query_reads.manifest.view(pd.DataFrame)
+    filtered_seqs = CasavaOneEightSingleLanePerSampleDirFmt()
 
     # Iterate over the FASTQ paired-end files in the DataFrame
     # and exececute chopper command
-    for _, fwd, rev in input_df.itertuples():
+    for _, fwd, rev in query_reads.manifest.itertuples():
         filtered_seqs_path_fwd = filtered_seqs.path / os.path.basename(fwd)
-        filtered_seqs_path_rev = filtered_seqs.path / os.path.basename(rev)
+        if rev:
+            filtered_seqs_path_rev = filtered_seqs.path / os.path.basename(rev)
+
         chopper_cmd = construct_chopper_command(
             quality, maxqual, minlength, maxlength, headcrop, tailcrop, threads
         )
-        execute(["gunzip", "-c", str(fwd)], chopper_cmd, filtered_seqs_path_fwd)
-        execute(["gunzip", "-c", str(rev)], chopper_cmd, filtered_seqs_path_rev)
 
-    build_filtered_out_dir(query_reads, input_df, filtered_seqs)
+        process_and_rezip(fwd, chopper_cmd, str(filtered_seqs_path_fwd))
+        if rev:
+            process_and_rezip(rev, chopper_cmd, str(filtered_seqs_path_rev))
+
+    for filename in os.listdir(filtered_seqs.path):
+        shutil.copy(os.path.join(filtered_seqs.path, filename), query_reads.path)
 
     return query_reads

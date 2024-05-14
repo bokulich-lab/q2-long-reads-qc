@@ -11,22 +11,14 @@ from qiime2.plugin import Citations, Plugin
 import q2_long_reads_qc
 from q2_long_reads_qc import __version__
 from q2_long_reads_qc._params import (
-    stats_paired_input_descriptions,
-    stats_paired_inputs,
-    stats_single_input_descriptions,
-    stats_single_inputs,
-    trim_paired_input_descriptions,
-    trim_paired_inputs,
-    trim_paired_output_descriptions,
-    trim_paired_outputs,
-    trim_paired_parameter_descriptions,
-    trim_paired_parameters,
-    trim_single_input_descriptions,
-    trim_single_inputs,
-    trim_single_output_descriptions,
-    trim_single_outputs,
-    trim_single_parameter_descriptions,
-    trim_single_parameters,
+    stats_input_descriptions,
+    stats_inputs,
+    trim_input_descriptions,
+    trim_inputs,
+    trim_output_descriptions,
+    trim_outputs,
+    trim_parameter_descriptions,
+    trim_parameters,
 )
 
 citations = Citations.load("citations.bib", package="q2_long_reads_qc")
@@ -46,50 +38,25 @@ plugin = Plugin(
 )
 
 plugin.visualizers.register_function(
-    function=q2_long_reads_qc.stats_single,
-    inputs=stats_single_inputs,
+    function=q2_long_reads_qc.stats,
+    inputs=stats_inputs,
     parameters="",
-    input_descriptions=stats_single_input_descriptions,
+    input_descriptions=stats_input_descriptions,
     parameter_descriptions={},
-    name="Quality control statistics of long single-end reads.",
-    description="Quality control statistics of long single-end reads using NanoPlot.",
-    citations=[citations["Nanopack2"]],
-)
-
-plugin.visualizers.register_function(
-    function=q2_long_reads_qc.stats_paired,
-    inputs=stats_paired_inputs,
-    parameters="",
-    input_descriptions=stats_paired_input_descriptions,
-    parameter_descriptions={},
-    name="Quality control statistics of long paired-end reads.",
-    description="Quality control statistics of long paired-end reads using NanoPlot.",
-    citations=[citations["Nanopack2"]],
-)
-
-
-plugin.methods.register_function(
-    function=q2_long_reads_qc.trim_single,
-    inputs=trim_single_inputs,
-    outputs=trim_single_outputs,
-    parameters=trim_single_parameters,
-    input_descriptions=trim_single_input_descriptions,
-    output_descriptions=trim_single_output_descriptions,
-    parameter_descriptions=trim_single_parameter_descriptions,
-    name="Trim long single-end sequences.",
-    description="Trim long demultiplexed single-end sequences using Chopper tool.",
+    name="Quality control statistics of long sequences.",
+    description="Quality control statistics of long sequences using NanoPlot.",
     citations=[citations["Nanopack2"]],
 )
 
 plugin.methods.register_function(
-    function=q2_long_reads_qc.trim_paired,
-    inputs=trim_paired_inputs,
-    outputs=trim_paired_outputs,
-    parameters=trim_paired_parameters,
-    input_descriptions=trim_paired_input_descriptions,
-    output_descriptions=trim_paired_output_descriptions,
-    parameter_descriptions=trim_paired_parameter_descriptions,
-    name="Trim long paired-end sequences.",
-    description="Trim long demultiplexed paired-end sequences using Chopper tool.",
+    function=q2_long_reads_qc.trim,
+    inputs=trim_inputs,
+    outputs=trim_outputs,
+    parameters=trim_parameters,
+    input_descriptions=trim_input_descriptions,
+    output_descriptions=trim_output_descriptions,
+    parameter_descriptions=trim_parameter_descriptions,
+    name="Trim long sequences.",
+    description="Trim long demultiplexed sequences using Chopper tool.",
     citations=[citations["Nanopack2"]],
 )

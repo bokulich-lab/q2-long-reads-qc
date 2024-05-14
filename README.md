@@ -29,13 +29,13 @@ Download data [here](https://polybox.ethz.ch/index.php/s/xDYeOuxtTdypIXQ)
 ####  trime-single
 ##### Trim 20 nucleotides from the start of each read
 ```
-qiime long-reads-qc trim-single --i-query-reads reads.qza --p-headcrop 20 --verbose --o-filtered-query-reads filtered
+qiime long-reads-qc trim --i-query-reads reads.qza --p-headcrop 20 --verbose --o-filtered-query-reads filtered.qza
 ```
 
 #### stat
 ##### Generate a visualization of statistics for the input sequences
 ```
-qiime long-reads-qc stats-single --i-sequences paired_reads.qza --o-visualization viz
+qiime long-reads-qc stats --i-sequences paired_reads.qza --o-visualization viz.qzv
 ```
 
 
