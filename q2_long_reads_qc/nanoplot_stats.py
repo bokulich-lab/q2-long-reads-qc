@@ -18,13 +18,13 @@ from q2_long_reads_qc._utils import run_command
 
 
 # Run NanoPlot on sequence files in the specified directory
-def _run_nanoplot(sequences_path, output_dir):
+def _run_nanoplot(sequences_path, nanoplot_output):
     fastq_files = [
         os.path.join(sequences_path, f)
         for f in os.listdir(sequences_path)
         if f.endswith(".fastq.gz")
     ]
-    nanoplot_cmd = ["NanoPlot", "--fastq", *fastq_files, "-o", output_dir]
+    nanoplot_cmd = ["NanoPlot", "--fastq", *fastq_files, "-o", nanoplot_output]
     try:
         # Run Nanoplot command
         run_command(nanoplot_cmd, verbose=True)
@@ -36,13 +36,13 @@ def _run_nanoplot(sequences_path, output_dir):
         )
 
 
-def _create_visualization(sequences, output_dir, tmp):
+def _create_visualization(output_dir, nanoplot_output):
     # Copy Nanoplot templates to the output directory
     TEMPLATES = pkg_resources.resource_filename("q2_long_reads_qc", "assets")
     copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
 
     # Copy Nanoplot data from the temporary directory to the output directory
-    copy_tree(tmp, os.path.join(output_dir, "nanoplot_data"))
+    copy_tree(nanoplot_output, os.path.join(output_dir, "nanoplot_data"))
 
     # Generate an index.html file for Nanoplot in the output directory
     context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}
@@ -54,6 +54,6 @@ def stats(
     output_dir: str,
     sequences: CasavaOneEightSingleLanePerSampleDirFmt,
 ):
-    with tempfile.TemporaryDirectory() as tmp:
-        _run_nanoplot(sequences.path, tmp)
-        _create_visualization(sequences, output_dir, tmp)
+    with tempfile.TemporaryDirectory() as nanoplot_output:
+        _run_nanoplot(sequences.path, nanoplot_output)
+        _create_visualization(output_dir, nanoplot_output)
