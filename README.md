@@ -5,13 +5,12 @@ QIIME2 plugin that utilizes Chopper and NanoPlot for quality control analysis of
 We provide two options for installing q2-long-reads-qc via conda environment files, depending on your preferred QIIME2 distribution:
 
 
-#### 1: Tiny distribution
-Use the environment file `q2-long-reads-qc-qiime2-tiny-2025.10.yml` to create a new conda environment. This option installs qiime2-tiny as the base and enriches it with q2-feature-classifier from the amplicon conda channel.
-
+#### 1: Amplicon distribution
+Use the environment file `q2-long-reads-qc-qiime2-amplicon-2025.10.yml` to create a new conda environment. 
 
 ```shell
-conda env create -f q2-long-reads-qc-qiime2-tiny-2025.10.yml
-conda activate q2-long-reads-tiny
+conda env create -f q2-long-reads-qc-qiime2-amplicon-2025.10.yml
+conda activate q2-long-reads-amplicon
 ```
 
 #### 2: Moshpit distribution
