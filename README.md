@@ -14,7 +14,7 @@ conda activate q2-long-reads-amplicon
 ```
 
 #### 2: Moshpit distribution
-Use the environment file `q2-long-reads-qc-qiime2-moshpit-2025.10.yml` to create a new conda environment based on the moshpit distro. This environment is suitable if you want a full-featured QIIME2 setup with all standard plugins.
+Use the environment file `q2-long-reads-qc-qiime2-moshpit-2025.10.yml` to create a new conda environment based on the moshpit distro. 
 
 ```shell
 conda env create -f q2-long-reads-qc-qiime2-moshpit-2025.10.yml

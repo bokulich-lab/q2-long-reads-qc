@@ -5,6 +5,8 @@ channels:
 - bioconda
 dependencies:
   - qiime2-amplicon
+  - chopper
+  - nanoplot
   - pip
   - pip:
     - q2-long-reads-qc@git+https://github.com/bokulich-lab/q2-long-reads-qc.git@main

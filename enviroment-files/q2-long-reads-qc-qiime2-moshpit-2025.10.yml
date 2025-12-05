@@ -6,5 +6,7 @@ channels:
 dependencies:
   - qiime2-moshpit
   - pip
+  - chopper
+  - nanoplot
   - pip:
     - q2-long-reads-qc@git+https://github.com/bokulich-lab/q2-long-reads-qc.git@main
