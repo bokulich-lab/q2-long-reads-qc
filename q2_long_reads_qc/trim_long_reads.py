@@ -9,7 +9,9 @@ import os
 import shutil
 import subprocess
 
-from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
+from q2_types.per_sample_sequences import (
+    CasavaOneEightSingleLanePerSampleDirFmt,
+)
 
 from q2_long_reads_qc._utils import run_commands_with_pipe
 
@@ -93,6 +95,7 @@ def trim(
             process_and_rezip(rev, chopper_cmd, str(filtered_seqs_path_rev))
 
     for filename in os.listdir(filtered_seqs.path):
-        shutil.copy(os.path.join(filtered_seqs.path, filename), query_reads.path)
+        src = os.path.join(filtered_seqs.path, filename)
+        shutil.copy(src, query_reads.path)
 
     return query_reads

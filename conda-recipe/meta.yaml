@@ -16,11 +16,11 @@ requirements:
   - wheel
 
   run:
-    - qiime2 >={{ qiime2 }}
-    - q2-types >={{ q2_types }}
-    - q2-feature-classifier >={{ q2_feature_classifier }}
-    - nanoplot
-    - chopper
+  - qiime2 >={{ qiime2 }}
+  - q2-types >={{ q2_types }}
+  - q2templates
+  - chopper
+  - nanoplot
 
   build:
   - setuptools
@@ -29,10 +29,10 @@ requirements:
 
 test:
   imports:
-    - q2_long_reads_qc
-    - qiime2.plugins.long_reads_qc
+  - q2_long_reads_qc
+  - qiime2.plugins.long_reads_qc
   commands:
-    - pytest --pyargs q2_long_reads_qc
+  - pytest --pyargs q2_long_reads_qc
 
 about:
   home: https://github.com/bokulich-lab/q2-long-reads-qc

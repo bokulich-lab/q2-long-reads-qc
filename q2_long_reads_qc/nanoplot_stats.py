@@ -8,11 +8,12 @@
 import os
 import subprocess
 import tempfile
-from distutils.dir_util import copy_tree
 
 import pkg_resources
 import q2templates
-from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
+from q2_types.per_sample_sequences import (
+    CasavaOneEightSingleLanePerSampleDirFmt,
+)
 
 from q2_long_reads_qc._utils import run_command
 
@@ -36,13 +37,28 @@ def _run_nanoplot(sequences_path, nanoplot_output):
         )
 
 
+def _copy_tree(src, dst):
+    """Copy a directory tree from src to dst."""
+    import shutil
+
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+    for item in os.listdir(src):
+        src_path = os.path.join(src, item)
+        dst_path = os.path.join(dst, item)
+        if os.path.isdir(src_path):
+            _copy_tree(src_path, dst_path)
+        else:
+            shutil.copy2(src_path, dst_path)
+
+
 def _create_visualization(output_dir, nanoplot_output):
     # Copy Nanoplot templates to the output directory
     TEMPLATES = pkg_resources.resource_filename("q2_long_reads_qc", "assets")
-    copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
+    _copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
 
     # Copy Nanoplot data from the temporary directory to the output directory
-    copy_tree(nanoplot_output, os.path.join(output_dir, "nanoplot_data"))
+    _copy_tree(nanoplot_output, os.path.join(output_dir, "nanoplot_data"))
 
     # Generate an index.html file for Nanoplot in the output directory
     context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}

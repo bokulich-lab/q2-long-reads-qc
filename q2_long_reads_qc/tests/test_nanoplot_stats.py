@@ -11,9 +11,15 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
+from q2_types.per_sample_sequences import (
+    CasavaOneEightSingleLanePerSampleDirFmt,
+)
 
-from q2_long_reads_qc.nanoplot_stats import _create_visualization, _run_nanoplot, stats
+from q2_long_reads_qc.nanoplot_stats import (
+    _create_visualization,
+    _run_nanoplot,
+    stats,
+)
 from q2_long_reads_qc.tests.test_long_reads_qc import LongReadsQCTestsBase
 
 
@@ -25,7 +31,7 @@ class TestRunNanoPlot(LongReadsQCTestsBase):
         with tempfile.TemporaryDirectory() as output_dir:
 
             # Mock run_command to simulate successful execution
-            mock_run_command.return_value = None  # Simulate no exception raised
+            mock_run_command.return_value = None
 
             # Call the function
             _run_nanoplot(sequences_path, output_dir)
@@ -36,12 +42,19 @@ class TestRunNanoPlot(LongReadsQCTestsBase):
                 for f in os.listdir(sequences_path)
                 if f.endswith(".fastq.gz")
             ]
-            nanoplot_cmd = ["NanoPlot", "--fastq", *fastq_files, "-o", output_dir]
+            nanoplot_cmd = [
+                "NanoPlot",
+                "--fastq",
+                *fastq_files,
+                "-o",
+                output_dir,
+            ]
             mock_run_command.assert_called_once_with(nanoplot_cmd, verbose=True)
 
     @patch("q2_long_reads_qc.nanoplot_stats.run_command")
     def test_run_nanoplot_exception(self, mock_run_command):
-        """Test that _run_nanoplot raises an exception when NanoPlot fails."""
+        """Test that _run_nanoplot raises an exception when NanoPlot
+        fails."""
         sequences_path = self.get_data_path("nanoplot/")
         with tempfile.TemporaryDirectory() as output_dir:
             # Mock run_command to raise CalledProcessError
@@ -58,7 +71,7 @@ class TestRunNanoPlot(LongReadsQCTestsBase):
 
 class TestCreateVisualization(LongReadsQCTestsBase):
     @patch("q2_long_reads_qc.nanoplot_stats.q2templates.render")
-    @patch("q2_long_reads_qc.nanoplot_stats.copy_tree")
+    @patch("q2_long_reads_qc.nanoplot_stats._copy_tree")
     @patch("q2_long_reads_qc.nanoplot_stats.pkg_resources.resource_filename")
     def test_create_visualization(
         self, mock_resource_filename, mock_copy_tree, mock_render
@@ -76,17 +89,20 @@ class TestCreateVisualization(LongReadsQCTestsBase):
         # Check that resource_filename was called correctly
         mock_resource_filename.assert_called_once_with("q2_long_reads_qc", "assets")
 
-        # Check that copy_tree was called correctly for templates and nanoplot data
+        # Check that _copy_tree was called correctly for templates and data
         mock_copy_tree.assert_any_call("/fake/templates/dir/nanoplot", output_dir)
         mock_copy_tree.assert_any_call(
-            nanoplot_output, os.path.join(output_dir, "nanoplot_data")
+            nanoplot_output,
+            os.path.join(output_dir, "nanoplot_data"),
         )
 
         # Check that q2templates.render was called correctly
         expected_context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}
         expected_index = os.path.join("/fake/templates/dir/nanoplot", "index.html")
         mock_render.assert_called_once_with(
-            [expected_index], output_dir, context=expected_context
+            [expected_index],
+            output_dir,
+            context=expected_context,
         )
 
 
@@ -107,7 +123,7 @@ class TestStats(unittest.TestCase):
         args, _ = mock_run_nanoplot.call_args
         self.assertEqual(args[0], sequences.path)
 
-        # Check that _create_visualization was called with the correct first argument
+        # Check that _create_visualization was called with correct argument
         args, _ = mock_create_visualization.call_args
         self.assertEqual(args[0], output_dir)
 
