@@ -131,3 +131,8 @@ dmypy.json
 .idea/
 
 .DS_Store
+
+# Version file from versioningit
+_version.py
+
+built-channel/
