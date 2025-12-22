@@ -12,7 +12,9 @@ from distutils.dir_util import copy_tree
 
 import pkg_resources
 import q2templates
-from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
+from q2_types.per_sample_sequences import (
+    CasavaOneEightSingleLanePerSampleDirFmt,
+)
 
 from q2_long_reads_qc._utils import run_command
 

@@ -1,10 +1,10 @@
 [run]
-source=q2_long_reads_qc_report
+source=q2_long_reads_qc
 branch = True
 omit =
     */tests*
     */__init__.py
-    q2_long_reads_qc_report/_version.py
+    q2_long_reads_qc/_version.py
     versioneer.py
 
 [report]
@@ -12,5 +12,7 @@ fail_under = 90
 omit =
     */tests*
     */__init__.py
-    q2_long_reads_qc_report/_version.py
+    q2_long_reads_qc/_version.py
     versioneer.py
+
+
