@@ -2,13 +2,13 @@
 QIIME2 plugin that utilizes Chopper and NanoPlot for quality control analysis of long sequences, generating easy-to-interpret stats as QIIME2 vizualization and allows trimming based on various filters.
 
 ## Installation
-We provide three options for installing q2-long-reads-qc via conda environment files, depending on your preferred QIIME2 distribution:
+We provide three options for installing q2-long-reads-qc via conda environment files, depending on your preferred QIIME2 distribution. The environment files can be found in the `environment-files/` directory of this repository:
 
 #### 1: Tiny distribution
 Use the environment file `q2-long-reads-qc-qiime2-tiny-2025.10.yml` to create a new conda environment based on the tiny distro.
 
 ```shell
-conda env create -f q2-long-reads-qc-qiime2-tiny-2025.10.yml
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-tiny-2025.10.yml
 conda activate q2-long-reads-tiny
 ```
 
@@ -17,7 +17,7 @@ conda activate q2-long-reads-tiny
 Use the environment file `q2-long-reads-qc-qiime2-amplicon-2025.10.yml` to create a new conda environment. 
 
 ```shell
-conda env create -f q2-long-reads-qc-qiime2-amplicon-2025.10.yml
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-amplicon-2025.10.yml
 conda activate q2-long-reads-amplicon
 ```
 
@@ -25,7 +25,7 @@ conda activate q2-long-reads-amplicon
 Use the environment file `q2-long-reads-qc-qiime2-moshpit-2025.10.yml` to create a new conda environment based on the moshpit distro. 
 
 ```shell
-conda env create -f q2-long-reads-qc-qiime2-moshpit-2025.10.yml
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-moshpit-2025.10.yml
 conda activate q2-long-reads-moshpit
 ```
 
