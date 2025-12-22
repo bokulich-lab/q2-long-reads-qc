@@ -14,7 +14,9 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from q2_types.per_sample_sequences import CasavaOneEightSingleLanePerSampleDirFmt
+from q2_types.per_sample_sequences import (
+    CasavaOneEightSingleLanePerSampleDirFmt,
+)
 
 from q2_long_reads_qc.tests.test_long_reads_qc import LongReadsQCTestsBase
 from q2_long_reads_qc.trim_long_reads import (
@@ -232,12 +234,14 @@ class TestProcessAndRezip(unittest.TestCase):
         filtered_seqs_path = "/fake/output/file.fastq.gz"
 
         # Mock run_commands_with_pipe to simulate successful execution
-        mock_run_commands_with_pipe.return_value = None  # Simulate no exception raised
+        # Simulate no exception raised
+        mock_run_commands_with_pipe.return_value = None
 
         # Call the function
         process_and_rezip(input_file, chopper_cmd, filtered_seqs_path)
 
-        # Check that run_commands_with_pipe was called with the correct arguments
+        # Check that run_commands_with_pipe was called with the correct
+        # arguments
         mock_run_commands_with_pipe.assert_called_once_with(
             ["gunzip", "-c", str(input_file)],
             chopper_cmd,
@@ -247,7 +251,8 @@ class TestProcessAndRezip(unittest.TestCase):
 
     @patch("q2_long_reads_qc.trim_long_reads.run_commands_with_pipe")
     def test_process_and_rezip_exception(self, mock_run_commands_with_pipe):
-        """Test that process_and_rezip raises an exception when chopper fails."""
+        """Test that process_and_rezip raises an exception when chopper
+        fails."""
         input_file = "/fake/input/file.fastq.gz"
         chopper_cmd = ["chopper", "filter"]
         filtered_seqs_path = "/fake/output/file.fastq.gz"
@@ -261,7 +266,8 @@ class TestProcessAndRezip(unittest.TestCase):
             process_and_rezip(input_file, chopper_cmd, filtered_seqs_path)
 
         self.assertIn(
-            "An error was encountered while using chopper", str(context.exception)
+            "An error was encountered while using chopper",
+            str(context.exception),
         )
         self.assertIn("(return code 1)", str(context.exception))
 
