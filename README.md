@@ -1,4 +1,7 @@
 # q2-long-reads-qc
+![CI](https://github.com/bokulich-lab/q2-long-reads-qc/actions/workflows/ci.yaml/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 QIIME2 plugin that utilizes Chopper and NanoPlot for quality control analysis of long sequences, generating easy-to-interpret stats as QIIME2 vizualization and allows trimming based on various filters.
 
 ## Installation
