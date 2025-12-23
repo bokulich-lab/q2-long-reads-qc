@@ -1,27 +1,36 @@
 # q2-long-reads-qc
+![CI](https://github.com/bokulich-lab/q2-long-reads-qc/actions/workflows/ci.yaml/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 QIIME2 plugin that utilizes Chopper and NanoPlot for quality control analysis of long sequences, generating easy-to-interpret stats as QIIME2 vizualization and allows trimming based on various filters.
 
-### Create q2-long-reads-qc environment
-```
-mamba create -yn q2-long-reads-qc \
-    -c conda-forge -c bioconda -c https://packages.qiime2.org/qiime2/2023.7/community/staged/ -c defaults \
-    q2cli q2templates q2-types bs4 multiqc fastqc gzip nanoplot chopper
+## Installation
+We provide three options for installing q2-long-reads-qc via conda environment files, depending on your preferred QIIME2 distribution. The environment files can be found in the `environment-files/` directory of this repository:
 
-```
+#### 1: Tiny distribution
+Use the environment file `q2-long-reads-qc-qiime2-tiny-2025.10.yml` to create a new conda environment based on the tiny distro.
 
-### Activate q2-long-reads-qc environment
-```
-conda activate q2-long-reads-qc
+```shell
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-tiny-2025.10.yml
+conda activate q2-long-reads-tiny
 ```
 
 
-```
-make dev
-qiime dev refresh-cache
+#### 2: Amplicon distribution
+Use the environment file `q2-long-reads-qc-qiime2-amplicon-2025.10.yml` to create a new conda environment. 
+
+```shell
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-amplicon-2025.10.yml
+conda activate q2-long-reads-amplicon
 ```
 
-### Download Data
-Download data [here](https://polybox.ethz.ch/index.php/s/xDYeOuxtTdypIXQ)
+#### 3: Moshpit distribution
+Use the environment file `q2-long-reads-qc-qiime2-moshpit-2025.10.yml` to create a new conda environment based on the moshpit distro. 
+
+```shell
+conda env create -n long-reads-env -f q2-long-reads-qc-qiime2-moshpit-2025.10.yml
+conda activate q2-long-reads-moshpit
+```
 
 
 ### Execute
