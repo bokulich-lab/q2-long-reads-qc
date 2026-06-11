@@ -9,8 +9,8 @@ import os
 import subprocess
 import tempfile
 from distutils.dir_util import copy_tree
+from importlib import resources
 
-import pkg_resources
 import q2templates
 from q2_types.per_sample_sequences import (
     CasavaOneEightSingleLanePerSampleDirFmt,
@@ -18,6 +18,7 @@ from q2_types.per_sample_sequences import (
 
 from q2_long_reads_qc._utils import run_command
 
+TEMPLATES = resources.files("q2_long_reads_qc") / "assets" / "nanoplot"
 
 # Run NanoPlot on sequence files in the specified directory
 def _run_nanoplot(sequences_path, nanoplot_output):
@@ -40,15 +41,14 @@ def _run_nanoplot(sequences_path, nanoplot_output):
 
 def _create_visualization(output_dir, nanoplot_output):
     # Copy Nanoplot templates to the output directory
-    TEMPLATES = pkg_resources.resource_filename("q2_long_reads_qc", "assets")
-    copy_tree(os.path.join(TEMPLATES, "nanoplot"), output_dir)
+    copy_tree(TEMPLATES, output_dir)
 
     # Copy Nanoplot data from the temporary directory to the output directory
     copy_tree(nanoplot_output, os.path.join(output_dir, "nanoplot_data"))
 
     # Generate an index.html file for Nanoplot in the output directory
     context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}
-    index = os.path.join(TEMPLATES, "nanoplot", "index.html")
+    index = os.path.join(TEMPLATES, "index.html")
     q2templates.render([index], output_dir, context=context)
 
 
