@@ -20,6 +20,7 @@ from q2_long_reads_qc._utils import run_command
 
 TEMPLATES = resources.files("q2_long_reads_qc") / "assets" / "nanoplot"
 
+
 # Run NanoPlot on sequence files in the specified directory
 def _run_nanoplot(sequences_path, nanoplot_output):
     fastq_files = [
