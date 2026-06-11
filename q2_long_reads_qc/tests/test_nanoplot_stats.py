@@ -73,9 +73,7 @@ class TestRunNanoPlot(LongReadsQCTestsBase):
 class TestCreateVisualization(LongReadsQCTestsBase):
     @patch("q2_long_reads_qc.nanoplot_stats.q2templates.render")
     @patch("q2_long_reads_qc.nanoplot_stats.copy_tree")
-    def test_create_visualization(
-        self, mock_copy_tree, mock_render
-    ):
+    def test_create_visualization(self, mock_copy_tree, mock_render):
         """Test that copies templates and data, and renders the index.html."""
         output_dir = "/fake/output/dir"
         nanoplot_output = "/fake/nanoplot/output"
