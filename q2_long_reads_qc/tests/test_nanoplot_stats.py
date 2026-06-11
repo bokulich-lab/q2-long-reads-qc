@@ -19,6 +19,7 @@ from q2_long_reads_qc.nanoplot_stats import (
     _create_visualization,
     _run_nanoplot,
     stats,
+    TEMPLATES,
 )
 from q2_long_reads_qc.tests.test_long_reads_qc import LongReadsQCTestsBase
 
@@ -72,25 +73,16 @@ class TestRunNanoPlot(LongReadsQCTestsBase):
 class TestCreateVisualization(LongReadsQCTestsBase):
     @patch("q2_long_reads_qc.nanoplot_stats.q2templates.render")
     @patch("q2_long_reads_qc.nanoplot_stats.copy_tree")
-    @patch("q2_long_reads_qc.nanoplot_stats.pkg_resources.resource_filename")
-    def test_create_visualization(
-        self, mock_resource_filename, mock_copy_tree, mock_render
-    ):
+    def test_create_visualization(self, mock_copy_tree, mock_render):
         """Test that copies templates and data, and renders the index.html."""
         output_dir = "/fake/output/dir"
         nanoplot_output = "/fake/nanoplot/output"
 
-        # Mock the resource filename to return a fake templates directory
-        mock_resource_filename.return_value = "/fake/templates/dir"
-
         # Call the function
         _create_visualization(output_dir, nanoplot_output)
 
-        # Check that resource_filename was called correctly
-        mock_resource_filename.assert_called_once_with("q2_long_reads_qc", "assets")
-
         # Check that copy_tree was called correctly for templates and data
-        mock_copy_tree.assert_any_call("/fake/templates/dir/nanoplot", output_dir)
+        mock_copy_tree.assert_any_call(TEMPLATES, output_dir)
         mock_copy_tree.assert_any_call(
             nanoplot_output,
             os.path.join(output_dir, "nanoplot_data"),
@@ -98,7 +90,7 @@ class TestCreateVisualization(LongReadsQCTestsBase):
 
         # Check that q2templates.render was called correctly
         expected_context = {"tabs": [{"title": "Nanoplot", "url": "index.html"}]}
-        expected_index = os.path.join("/fake/templates/dir/nanoplot", "index.html")
+        expected_index = os.path.join(TEMPLATES, "index.html")
         mock_render.assert_called_once_with(
             [expected_index],
             output_dir,

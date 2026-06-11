@@ -119,7 +119,7 @@ class TestTrim(LongReadsQCTestsBase):
                     obs_fh.seek(0)
                     # Iterate over expected and observed reads, side-by-side
                     for records in itertools.zip_longest(*[obs_fh] * 4):
-                        (obs_seq_h, obs_seq, _, obs_qual) = records
+                        obs_seq_h, obs_seq, _, obs_qual = records
                         # Make sure seqs that do not map to genome were removed
                         obs_id = obs_seq_h.strip("@\n")
                         self.assertTrue(obs_id in seq_ids_maxlen10000)
@@ -151,7 +151,7 @@ class TestTrim(LongReadsQCTestsBase):
                     obs_fh.seek(0)
                     # Iterate over expected and observed reads, side-by-side
                     for records in itertools.zip_longest(*[obs_fh] * 4):
-                        (obs_seq_h, obs_seq, _, obs_qual) = records
+                        obs_seq_h, obs_seq, _, obs_qual = records
                         # Make sure seqs that do not map to genome were removed
                         obs_id = obs_seq_h.strip("@\n")
                         self.assertTrue(obs_id in seq_ids_minlen10000)
@@ -180,7 +180,7 @@ class TestTrim(LongReadsQCTestsBase):
                 with gzip.open(file_path, "rt") as obs_fh:
                     # Iterate over expected and observed reads, side-by-side
                     for records in itertools.zip_longest(*[obs_fh] * 4):
-                        (obs_seq_h, obs_seq, _, obs_qual) = records
+                        obs_seq_h, obs_seq, _, obs_qual = records
                         # Make sure seqs that do not map to genome were removed
                         obs_id = obs_seq_h.split()[0]
                         self.assertTrue(obs_id in seq_ids_pe_minq_20)
